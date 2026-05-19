@@ -1,0 +1,1701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GDKP Raid Manager</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #c9a84c;
+    --gold-light: #e8cc7a;
+    --gold-dark: #8a6f2e;
+    --gold-dim: rgba(201,168,76,0.15);
+    --gold-border: rgba(201,168,76,0.3);
+    --bg: #0d0d0f;
+    --bg-card: #13131a;
+    --bg-raised: #1a1a24;
+    --bg-input: #0f0f17;
+    --text: #e8e0d0;
+    --text-muted: #7a7060;
+    --text-dim: #4a4540;
+    --red: #c0392b;
+    --red-dim: rgba(192,57,43,0.15);
+    --green: #27ae60;
+    --green-dim: rgba(39,174,96,0.15);
+    --amber: #e67e22;
+    --amber-dim: rgba(230,126,34,0.15);
+    --blue: #2980b9;
+    --radius: 4px;
+    --radius-lg: 8px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Crimson Pro', Georgia, serif;
+    font-size: 16px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* Subtle parchment texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.01) 2px, rgba(255,255,255,0.01) 4px);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── HEADER ── */
+  header {
+    border-bottom: 1px solid var(--gold-border);
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    background: rgba(13,13,15,0.96);
+    backdrop-filter: blur(8px);
+    z-index: 100;
+  }
+
+  .logo {
+    font-family: 'Cinzel', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .logo-icon { font-size: 22px; }
+
+  .header-right { display: flex; align-items: center; gap: 12px; }
+
+  /* ── VIEWS ── */
+  .view { display: none; padding: 2rem; max-width: 1100px; margin: 0 auto; position: relative; z-index: 1; }
+  .view.active { display: block; }
+
+  /* ── SETUP VIEW ── */
+  .setup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  @media (max-width: 700px) { .setup-grid { grid-template-columns: 1fr; } }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid rgba(201,168,76,0.12);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .card-title {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--gold-border);
+  }
+
+  /* ── INPUTS ── */
+  input, select, textarea {
+    background: var(--bg-input);
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-family: 'Crimson Pro', serif;
+    font-size: 15px;
+    padding: 8px 12px;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--gold);
+  }
+
+  input::placeholder { color: var(--text-dim); }
+
+  select option { background: #1a1a24; }
+
+  /* ── BUTTONS ── */
+  .btn {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 8px 18px;
+    border-radius: var(--radius);
+    border: 1px solid;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .btn:active { transform: scale(0.97); }
+
+  .btn-gold {
+    background: var(--gold);
+    color: #1a1200;
+    border-color: var(--gold);
+  }
+  .btn-gold:hover { background: var(--gold-light); border-color: var(--gold-light); }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--gold);
+    border-color: var(--gold-border);
+  }
+  .btn-outline:hover { border-color: var(--gold); background: var(--gold-dim); }
+
+  .btn-danger {
+    background: transparent;
+    color: var(--red);
+    border-color: rgba(192,57,43,0.3);
+    font-size: 10px;
+    padding: 4px 10px;
+  }
+  .btn-danger:hover { background: var(--red-dim); border-color: var(--red); }
+
+  .btn-sm {
+    font-size: 10px;
+    padding: 4px 10px;
+  }
+
+  .btn-success {
+    background: transparent;
+    color: var(--green);
+    border-color: rgba(39,174,96,0.3);
+  }
+  .btn-success:hover { background: var(--green-dim); border-color: var(--green); }
+
+  .btn-paid {
+    background: var(--green-dim);
+    color: var(--green);
+    border-color: rgba(39,174,96,0.4);
+    font-size: 10px;
+    padding: 4px 10px;
+  }
+
+  /* ── TAGS ── */
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .tag {
+    background: var(--bg-raised);
+    border: 1px solid var(--gold-border);
+    border-radius: 3px;
+    padding: 3px 10px;
+    font-size: 13px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .tag-remove {
+    color: var(--text-dim);
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    transition: color 0.15s;
+  }
+  .tag-remove:hover { color: var(--red); }
+
+  /* ── ROW UTILS ── */
+  .row { display: flex; gap: 8px; align-items: flex-start; }
+  .row-center { display: flex; gap: 8px; align-items: center; }
+  .flex1 { flex: 1; }
+  .mb8 { margin-bottom: 8px; }
+  .mb12 { margin-bottom: 12px; }
+  .mb16 { margin-bottom: 16px; }
+  .mt8 { margin-top: 8px; }
+  .mt12 { margin-top: 12px; }
+  .mt16 { margin-top: 16px; }
+
+  /* ── SECTION HEADINGS ── */
+  h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--gold);
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.05em;
+  }
+
+  h3 {
+    font-family: 'Cinzel', serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.75rem;
+  }
+
+  /* ── PIN GATE ── */
+  #pin-gate {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.85);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 200;
+    backdrop-filter: blur(6px);
+  }
+
+  .pin-box {
+    background: var(--bg-card);
+    border: 1px solid var(--gold-border);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    width: 320px;
+    text-align: center;
+  }
+
+  .pin-box h3 {
+    font-family: 'Cinzel', serif;
+    font-size: 16px;
+    color: var(--gold);
+    margin-bottom: 0.5rem;
+  }
+
+  .pin-box p {
+    color: var(--text-muted);
+    font-size: 14px;
+    margin-bottom: 1rem;
+  }
+
+  .pin-box input {
+    text-align: center;
+    font-size: 24px;
+    letter-spacing: 0.3em;
+    margin-bottom: 1rem;
+  }
+
+  .pin-error { color: var(--red); font-size: 13px; margin-top: 8px; min-height: 20px; }
+
+  /* ── NAV TABS ── */
+  .nav-tabs {
+    display: flex;
+    gap: 2px;
+    background: var(--bg-card);
+    border: 1px solid var(--gold-border);
+    border-radius: var(--radius);
+    padding: 3px;
+    margin-bottom: 1.5rem;
+  }
+
+  .nav-tab {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    padding: 7px 16px;
+    border-radius: 2px;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: all 0.15s;
+    border: none;
+    background: none;
+    text-transform: uppercase;
+  }
+
+  .nav-tab.active {
+    background: var(--gold);
+    color: #1a1200;
+    font-weight: 600;
+  }
+
+  .nav-tab:not(.active):hover { color: var(--gold); }
+
+  /* ── METRICS ── */
+  .metrics-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px;
+    margin-bottom: 1.5rem;
+  }
+
+  .metric {
+    background: var(--bg-card);
+    border: 1px solid rgba(201,168,76,0.12);
+    border-radius: var(--radius-lg);
+    padding: 1rem;
+  }
+
+  .metric-label {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-family: 'Cinzel', serif;
+    margin-bottom: 4px;
+  }
+
+  .metric-value {
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--gold);
+    line-height: 1.2;
+  }
+
+  /* ── ITEM CARDS ── */
+  .items-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1rem;
+  }
+
+  .item-card {
+    background: var(--bg-card);
+    border: 1px solid rgba(201,168,76,0.12);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .item-card.idle { border-color: rgba(230,126,34,0.5); }
+  .item-card.closed { border-color: rgba(74,69,64,0.4); opacity: 0.7; }
+  .item-card.hard-reserved { border-color: rgba(192,57,43,0.4); opacity: 0.6; }
+
+  .item-card-header {
+    padding: 12px 14px;
+    border-bottom: 1px solid rgba(201,168,76,0.1);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .item-name {
+    font-family: 'Cinzel', serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gold-light);
+    line-height: 1.3;
+    flex: 1;
+  }
+
+  .item-name a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .item-name a:hover { text-decoration: underline; }
+
+  .item-status {
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 2px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .status-open { background: var(--green-dim); color: var(--green); border: 1px solid rgba(39,174,96,0.3); }
+  .status-idle { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(230,126,34,0.4); animation: pulse-amber 2s infinite; }
+  .status-closed { background: var(--bg-raised); color: var(--text-muted); border: 1px solid rgba(255,255,255,0.08); }
+  .status-reserved { background: var(--red-dim); color: var(--red); border: 1px solid rgba(192,57,43,0.3); }
+
+  @keyframes pulse-amber {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+
+  .item-card-body { padding: 12px 14px; }
+
+  /* Timer */
+  .item-timer {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .timer-bar {
+    flex: 1;
+    height: 3px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .timer-fill {
+    height: 100%;
+    background: var(--green);
+    border-radius: 2px;
+    transition: width 1s linear, background 0.5s;
+  }
+
+  .timer-fill.warn { background: var(--amber); }
+  .timer-fill.dead { background: var(--red); }
+
+  /* Bids list */
+  .bids-list { margin-bottom: 10px; }
+
+  .bid-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: 14px;
+    gap: 8px;
+  }
+
+  .bid-row:last-child { border-bottom: none; }
+
+  .bid-rank {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    color: var(--text-dim);
+    width: 20px;
+    flex-shrink: 0;
+  }
+
+  .bid-rank.first { color: var(--gold); }
+
+  .bid-name { flex: 1; color: var(--text); }
+  .bid-name.winner { color: var(--gold-light); font-weight: 600; }
+
+  .bid-amount {
+    color: var(--green);
+    font-weight: 600;
+    font-size: 15px;
+    min-width: 60px;
+    text-align: right;
+  }
+
+  .bid-amount.winner { color: var(--gold); }
+
+  .no-bids { color: var(--text-dim); font-size: 13px; font-style: italic; padding: 4px 0; }
+
+  /* Bid form */
+  .bid-form {
+    display: flex;
+    gap: 6px;
+    margin-top: 10px;
+  }
+
+  .bid-form select { flex: 1; }
+  .bid-form input[type=number] { width: 90px; flex-shrink: 0; }
+
+  /* Host controls */
+  .host-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+  }
+
+  /* ── IMPORT PANEL ── */
+  .import-area {
+    width: 100%;
+    height: 140px;
+    resize: vertical;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  /* ── PAYOUT VIEW ── */
+  .payout-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+  }
+
+  .payout-table th {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 8px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--gold-border);
+    font-weight: 400;
+  }
+
+  .payout-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    vertical-align: middle;
+  }
+
+  .payout-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .payout-table tr.paid td { opacity: 0.5; }
+
+  .payout-name { font-weight: 600; }
+  .payout-gold { color: var(--gold); font-size: 17px; font-weight: 600; }
+  .payout-gold.negative { color: var(--red); }
+  .payout-spent { color: var(--text-muted); font-size: 13px; }
+  .payout-host-row td { color: var(--gold-light); }
+  .payout-host-row .payout-gold { color: var(--gold-light); font-size: 20px; }
+
+  .divider {
+    border: none;
+    border-top: 1px solid rgba(201,168,76,0.15);
+    margin: 1.5rem 0;
+  }
+
+  /* ── NOTICE BANNER ── */
+  .notice {
+    background: var(--amber-dim);
+    border: 1px solid rgba(230,126,34,0.3);
+    border-radius: var(--radius);
+    padding: 10px 14px;
+    font-size: 13px;
+    color: var(--amber);
+    margin-bottom: 1rem;
+  }
+
+  .notice.info {
+    background: rgba(41,128,185,0.1);
+    border-color: rgba(41,128,185,0.3);
+    color: #5dade2;
+  }
+
+  /* ── PIN BADGE ── */
+  .pin-display {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    background: var(--bg-card);
+    border: 1px solid var(--gold-border);
+    border-radius: var(--radius);
+    padding: 5px 10px;
+  }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 150;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--bg-card);
+    border: 1px solid var(--gold-border);
+    border-radius: var(--radius-lg);
+    padding: 1.75rem;
+    width: 400px;
+    max-width: 90vw;
+  }
+
+  .modal h3 { color: var(--gold); margin-bottom: 1rem; }
+
+  /* ── EMPTY STATE ── */
+  .empty-state {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: var(--text-dim);
+    font-style: italic;
+    font-size: 15px;
+  }
+
+  /* ── SLIDER ── */
+  .slider-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 8px;
+  }
+
+  input[type=range] {
+    flex: 1;
+    height: 4px;
+    background: var(--bg-raised);
+    border: none;
+    padding: 0;
+    accent-color: var(--gold);
+    cursor: pointer;
+  }
+
+  .slider-val {
+    font-family: 'Cinzel', serif;
+    font-size: 14px;
+    color: var(--gold);
+    min-width: 36px;
+    text-align: right;
+  }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--gold-dark); border-radius: 3px; }
+
+  /* ── TOAST ── */
+  #toast {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    background: var(--bg-raised);
+    border: 1px solid var(--gold-border);
+    border-radius: var(--radius);
+    padding: 10px 16px;
+    font-size: 14px;
+    color: var(--text);
+    z-index: 300;
+    transform: translateY(60px);
+    opacity: 0;
+    transition: all 0.3s;
+    pointer-events: none;
+  }
+  #toast.show { transform: translateY(0); opacity: 1; }
+
+  .label-sm {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+    display: block;
+  }
+
+  .host-only { display: none; }
+  body.is-host .host-only { display: flex; }
+  body.is-host .host-only-block { display: block; }
+  .host-only-block { display: none; }
+
+  .wowhead-link { color: var(--gold-light); text-decoration: none; }
+  .wowhead-link:hover { text-decoration: underline; }
+
+  .cut-badge {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 2px;
+    background: var(--gold-dim);
+    color: var(--gold);
+    border: 1px solid var(--gold-border);
+    margin-left: 8px;
+  }
+
+  .filter-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .filter-btn {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: var(--radius);
+    border: 1px solid rgba(255,255,255,0.1);
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .filter-btn.active, .filter-btn:hover {
+    border-color: var(--gold-border);
+    color: var(--gold);
+    background: var(--gold-dim);
+  }
+</style>
+</head>
+<body>
+
+<!-- PIN GATE -->
+<div id="pin-gate">
+  <div class="pin-box">
+    <h3>⚔ GDKP Raid Manager</h3>
+    <p>Enter host PIN to manage, or join as a raider</p>
+    <input type="password" id="pin-input" maxlength="8" placeholder="••••" />
+    <div style="display:flex; gap:8px; justify-content:center; margin-top:4px;">
+      <button class="btn btn-outline" onclick="enterAsRaider()">Join as Raider</button>
+      <button class="btn btn-gold" onclick="tryPin()">Host Login</button>
+    </div>
+    <div class="pin-error" id="pin-error"></div>
+    <div style="margin-top:1rem; padding-top:1rem; border-top:1px solid rgba(255,255,255,0.06); font-size:12px; color:var(--text-dim);">
+      First time? Set your host PIN in Setup after logging in.
+    </div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    <span class="logo-icon">⚔</span>
+    GDKP Manager
+  </div>
+  <div class="header-right">
+    <span id="host-badge" style="display:none;" class="pin-display">HOST</span>
+    <span id="raider-badge" style="display:none;" class="pin-display">RAIDER VIEW</span>
+    <button class="btn btn-outline btn-sm" onclick="switchView('auction')" id="nav-auction">Auction</button>
+    <button class="btn btn-outline btn-sm" onclick="switchView('payout')" id="nav-payout">Payouts</button>
+    <button class="btn btn-outline btn-sm host-only" style="display:none;" onclick="switchView('setup')">Setup</button>
+  </div>
+</header>
+
+<!-- SETUP VIEW -->
+<div id="view-setup" class="view active">
+  <h2>Raid Setup</h2>
+
+  <div class="setup-grid">
+    <div>
+      <!-- PIN -->
+      <div class="card">
+        <div class="card-title">Host PIN</div>
+        <p style="font-size:13px; color:var(--text-muted); margin-bottom:10px;">Set a PIN that only you know. Raiders enter without a PIN.</p>
+        <div class="row">
+          <input type="password" id="new-pin" placeholder="New PIN (4–8 digits)" maxlength="8" style="flex:1;" />
+          <button class="btn btn-gold" onclick="savePin()">Save PIN</button>
+        </div>
+        <div id="pin-save-msg" style="font-size:13px; color:var(--green); margin-top:6px; min-height:18px;"></div>
+      </div>
+
+      <!-- HOST CUT -->
+      <div class="card">
+        <div class="card-title">Host Cut</div>
+        <div class="slider-row">
+          <input type="range" min="0" max="30" step="1" value="10" id="host-cut-slider"
+            oninput="document.getElementById('host-cut-display').textContent=this.value+'%'; recalc();" />
+          <span class="slider-val" id="host-cut-display">10%</span>
+        </div>
+      </div>
+
+      <!-- IDLE TIMER -->
+      <div class="card">
+        <div class="card-title">Idle Timer</div>
+        <p style="font-size:13px; color:var(--text-muted); margin-bottom:8px;">Mark item as idle after this many minutes with no new bids.</p>
+        <div class="slider-row">
+          <input type="range" min="1" max="10" step="1" value="2" id="idle-timer-slider"
+            oninput="document.getElementById('idle-timer-display').textContent=this.value+' min';" />
+          <span class="slider-val" id="idle-timer-display">2 min</span>
+        </div>
+      </div>
+
+      <!-- GOOGLE APPS SCRIPT URL -->
+      <div class="card">
+        <div class="card-title">Backend URL</div>
+        <p style="font-size:13px; color:var(--text-muted); margin-bottom:8px;">Paste your Google Apps Script web app URL here to enable persistent storage.</p>
+        <input type="url" id="backend-url" placeholder="https://script.google.com/macros/s/.../exec" />
+        <div style="margin-top:8px; display:flex; gap:8px;">
+          <button class="btn btn-outline btn-sm" onclick="saveBackendUrl()">Save URL</button>
+          <button class="btn btn-outline btn-sm" onclick="testBackend()">Test Connection</button>
+        </div>
+        <div id="backend-status" style="font-size:13px; margin-top:6px; min-height:18px;"></div>
+      </div>
+    </div>
+
+    <div>
+      <!-- RAIDERS -->
+      <div class="card">
+        <div class="card-title">Raiders</div>
+        <div class="row mb8">
+          <input type="text" id="raider-input" placeholder="Character name" style="flex:1;"
+            onkeydown="if(event.key==='Enter') addRaider()" />
+          <button class="btn btn-gold" onclick="addRaider()">Add</button>
+        </div>
+        <div class="tags" id="raider-tags">
+          <span style="font-size:13px; color:var(--text-dim); font-style:italic;">No raiders added yet.</span>
+        </div>
+      </div>
+
+      <!-- IMPORT -->
+      <div class="card">
+        <div class="card-title">Import Loot from Gargul</div>
+        <p style="font-size:13px; color:var(--text-muted); margin-bottom:8px;">
+          In-game: <code style="color:var(--gold); font-size:12px;">/gdkp → Export → JSON</code> or paste any format — JSON, CSV, or one item per line.
+        </p>
+        <textarea class="import-area" id="import-text" placeholder="Paste Gargul export string here...&#10;&#10;Supports:&#10;• Gargul JSON export&#10;• CSV (itemID,itemName)&#10;• Plain text (one item per line)"></textarea>
+        <div style="display:flex; gap:8px; margin-top:8px;">
+          <button class="btn btn-gold" onclick="importItems()">Import Items</button>
+          <button class="btn btn-outline" onclick="clearImport()">Clear</button>
+        </div>
+        <div id="import-status" style="font-size:13px; margin-top:6px; min-height:18px; color:var(--green);"></div>
+      </div>
+
+      <!-- MANUAL ADD -->
+      <div class="card">
+        <div class="card-title">Add Item Manually</div>
+        <div class="row">
+          <input type="text" id="manual-item-name" placeholder="Item name" style="flex:1;"
+            onkeydown="if(event.key==='Enter') addItemManual()" />
+          <input type="text" id="manual-item-id" placeholder="Item ID (optional)" style="width:120px;" />
+          <button class="btn btn-gold" onclick="addItemManual()">Add</button>
+        </div>
+      </div>
+
+      <div style="margin-top:1rem;">
+        <button class="btn btn-gold" onclick="startRaid()" style="width:100%;">
+          ⚔ Open Auction House
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AUCTION VIEW -->
+<div id="view-auction" class="view">
+  <div class="metrics-row" id="metrics-row">
+    <div class="metric"><div class="metric-label">Total Pot</div><div class="metric-value" id="m-pot">0g</div></div>
+    <div class="metric"><div class="metric-label">Host Cut</div><div class="metric-value" id="m-host-cut">0g</div></div>
+    <div class="metric"><div class="metric-label">Per Raider</div><div class="metric-value" id="m-per-raider">0g</div></div>
+    <div class="metric"><div class="metric-label">Items</div><div class="metric-value" id="m-items">0</div></div>
+    <div class="metric"><div class="metric-label">Closed</div><div class="metric-value" id="m-closed">0</div></div>
+  </div>
+
+  <div class="notice info" id="raider-notice" style="display:none;">
+    You are viewing as a raider. Enter your name and gold amount on any item to place a bid.
+  </div>
+
+  <div class="filter-row">
+    <button class="filter-btn active" onclick="setFilter('all', this)">All</button>
+    <button class="filter-btn" onclick="setFilter('open', this)">Open</button>
+    <button class="filter-btn" onclick="setFilter('idle', this)">Idle</button>
+    <button class="filter-btn" onclick="setFilter('closed', this)">Closed</button>
+    <button class="filter-btn" onclick="setFilter('reserved', this)">Reserved</button>
+    <span style="flex:1;"></span>
+    <div class="host-only" style="gap:6px;">
+      <button class="btn btn-outline btn-sm" onclick="reopenAll()">Reopen All</button>
+      <button class="btn btn-outline btn-sm" onclick="closeAll()">Close All</button>
+    </div>
+  </div>
+
+  <div class="items-grid" id="items-grid">
+    <div class="empty-state">No items yet. Go to Setup to import your loot list.</div>
+  </div>
+</div>
+
+<!-- PAYOUT VIEW -->
+<div id="view-payout" class="view">
+  <h2>Payout Breakdown</h2>
+
+  <div class="metrics-row">
+    <div class="metric"><div class="metric-label">Total Pot</div><div class="metric-value" id="p-pot">0g</div></div>
+    <div class="metric"><div class="metric-label">Host Cut</div><div class="metric-value" id="p-host">0g</div></div>
+    <div class="metric"><div class="metric-label">Raider Pool</div><div class="metric-value" id="p-pool">0g</div></div>
+    <div class="metric"><div class="metric-label">Per Raider</div><div class="metric-value" id="p-each">0g</div></div>
+  </div>
+
+  <div class="notice" id="payout-notice" style="display:none;"></div>
+
+  <div class="card">
+    <div class="card-title">Raider Payouts <span id="paid-count" style="color:var(--text-dim); font-weight:400; font-size:10px;"></span></div>
+    <table class="payout-table" id="payout-table">
+      <thead>
+        <tr>
+          <th>Raider</th>
+          <th>Earned</th>
+          <th>Spent</th>
+          <th>Net</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="payout-body">
+        <tr><td colspan="5" class="empty-state">No raiders or bids yet.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card host-only-block" id="payout-host-card">
+    <div class="card-title">Host</div>
+    <div style="display:flex; align-items:center; justify-content:space-between;">
+      <span style="font-size:15px;">Host cut <span id="p-host-pct" class="cut-badge">10%</span></span>
+      <span class="payout-gold" id="p-host-amt" style="font-size:22px;">0g</span>
+    </div>
+    <div style="margin-top:10px;">
+      <button class="btn btn-outline" onclick="exportCSV()">Export CSV</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════
+let state = {
+  hostPin: localStorage.getItem('gdkp_pin') || '',
+  isHost: false,
+  backendUrl: localStorage.getItem('gdkp_backend') || '',
+  raiders: JSON.parse(localStorage.getItem('gdkp_raiders') || '[]'),
+  items: JSON.parse(localStorage.getItem('gdkp_items') || '[]'),
+  hostCutPct: parseInt(localStorage.getItem('gdkp_hostcut') || '10'),
+  idleMinutes: parseInt(localStorage.getItem('gdkp_idle') || '2'),
+  paidOut: JSON.parse(localStorage.getItem('gdkp_paid') || '{}'),
+  currentFilter: 'all',
+};
+
+let pollInterval = null;
+let timerInterval = null;
+
+// ═══════════════════════════════════════════════════════
+//  AUTH
+// ═══════════════════════════════════════════════════════
+function tryPin() {
+  const entered = document.getElementById('pin-input').value;
+  if (!state.hostPin) {
+    // First time — set the pin
+    if (entered.length >= 4) {
+      state.hostPin = entered;
+      localStorage.setItem('gdkp_pin', entered);
+      loginAsHost();
+    } else {
+      document.getElementById('pin-error').textContent = 'PIN must be at least 4 characters.';
+    }
+    return;
+  }
+  if (entered === state.hostPin) {
+    loginAsHost();
+  } else {
+    document.getElementById('pin-error').textContent = 'Incorrect PIN.';
+    document.getElementById('pin-input').value = '';
+  }
+}
+
+function loginAsHost() {
+  state.isHost = true;
+  document.body.classList.add('is-host');
+  document.getElementById('pin-gate').style.display = 'none';
+  document.getElementById('host-badge').style.display = 'inline-block';
+  document.querySelectorAll('.host-only').forEach(el => el.style.display = 'flex');
+  document.querySelectorAll('.host-only-block').forEach(el => el.style.display = 'block');
+  initUI();
+  switchView('setup');
+}
+
+function enterAsRaider() {
+  state.isHost = false;
+  document.getElementById('pin-gate').style.display = 'none';
+  document.getElementById('raider-badge').style.display = 'inline-block';
+  document.getElementById('raider-notice').style.display = 'block';
+  initUI();
+  switchView('auction');
+  startPolling();
+}
+
+document.getElementById('pin-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') tryPin();
+});
+
+// ═══════════════════════════════════════════════════════
+//  INIT & NAVIGATION
+// ═══════════════════════════════════════════════════════
+function initUI() {
+  // Restore saved settings to UI
+  document.getElementById('host-cut-slider').value = state.hostCutPct;
+  document.getElementById('host-cut-display').textContent = state.hostCutPct + '%';
+  document.getElementById('idle-timer-slider').value = state.idleMinutes;
+  document.getElementById('idle-timer-display').textContent = state.idleMinutes + ' min';
+  if (state.backendUrl) document.getElementById('backend-url').value = state.backendUrl;
+  renderRaiders();
+  renderItems();
+  recalc();
+  startTimers();
+}
+
+function switchView(name) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-' + name).classList.add('active');
+  if (name === 'payout') renderPayout();
+}
+
+function setFilter(f, btn) {
+  state.currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderItems();
+}
+
+// ═══════════════════════════════════════════════════════
+//  PIN & SETTINGS
+// ═══════════════════════════════════════════════════════
+function savePin() {
+  const v = document.getElementById('new-pin').value.trim();
+  if (v.length < 4) { toast('PIN must be at least 4 characters.'); return; }
+  state.hostPin = v;
+  localStorage.setItem('gdkp_pin', v);
+  document.getElementById('pin-save-msg').textContent = 'PIN saved!';
+  setTimeout(() => document.getElementById('pin-save-msg').textContent = '', 2000);
+}
+
+function saveBackendUrl() {
+  const url = document.getElementById('backend-url').value.trim();
+  state.backendUrl = url;
+  localStorage.setItem('gdkp_backend', url);
+  toast('Backend URL saved.');
+}
+
+async function testBackend() {
+  if (!state.backendUrl) { toast('No backend URL set.'); return; }
+  const el = document.getElementById('backend-status');
+  el.textContent = 'Testing...';
+  el.style.color = 'var(--text-muted)';
+  try {
+    const r = await fetch(state.backendUrl + '?action=ping');
+    const d = await r.json();
+    if (d.ok) {
+      el.textContent = '✓ Connected!';
+      el.style.color = 'var(--green)';
+    } else {
+      el.textContent = '✗ Responded but unexpected format.';
+      el.style.color = 'var(--amber)';
+    }
+  } catch(e) {
+    el.textContent = '✗ Could not reach backend. Check URL.';
+    el.style.color = 'var(--red)';
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  RAIDERS
+// ═══════════════════════════════════════════════════════
+function addRaider() {
+  const inp = document.getElementById('raider-input');
+  const name = inp.value.trim();
+  if (!name || state.raiders.includes(name)) { inp.value = ''; return; }
+  state.raiders.push(name);
+  inp.value = '';
+  saveRaiders();
+  renderRaiders();
+  recalc();
+}
+
+function removeRaider(name) {
+  state.raiders = state.raiders.filter(r => r !== name);
+  saveRaiders();
+  renderRaiders();
+  recalc();
+}
+
+function renderRaiders() {
+  const el = document.getElementById('raider-tags');
+  if (!state.raiders.length) {
+    el.innerHTML = '<span style="font-size:13px; color:var(--text-dim); font-style:italic;">No raiders added yet.</span>';
+    return;
+  }
+  el.innerHTML = state.raiders.map(r =>
+    `<span class="tag">${r}<button class="tag-remove" onclick="removeRaider('${r}')" title="Remove">&times;</button></span>`
+  ).join('');
+}
+
+function saveRaiders() {
+  localStorage.setItem('gdkp_raiders', JSON.stringify(state.raiders));
+}
+
+// ═══════════════════════════════════════════════════════
+//  IMPORT
+// ═══════════════════════════════════════════════════════
+function importItems() {
+  const raw = document.getElementById('import-text').value.trim();
+  if (!raw) return;
+
+  let parsed = [];
+
+  // Try Gargul JSON format
+  try {
+    const json = JSON.parse(raw);
+    // Gargul GDKP session JSON — items may be in multiple places
+    const sources = [
+      json.items, json.Items, json.loot, json.Loot,
+      json.session?.items, json.Session?.items,
+      json.GDKP?.items,
+    ].filter(Boolean);
+
+    for (const src of sources) {
+      if (Array.isArray(src)) {
+        for (const item of src) {
+          const name = item.name || item.Name || item.itemName || item.item_name;
+          const id = item.id || item.itemId || item.item_id || item.ID;
+          if (name) parsed.push({ name: String(name).trim(), itemId: id ? String(id) : null });
+        }
+      } else if (typeof src === 'object') {
+        for (const key of Object.keys(src)) {
+          const item = src[key];
+          const name = item.name || item.Name || item.itemName || key;
+          const id = item.id || item.itemId || null;
+          if (name) parsed.push({ name: String(name).trim(), itemId: id ? String(id) : null });
+        }
+      }
+    }
+  } catch(e) { /* not JSON */ }
+
+  // Try CSV: itemID,itemName or itemName,itemID
+  if (!parsed.length) {
+    const lines = raw.split(/[\n,;]+/).map(l => l.trim()).filter(Boolean);
+    // Detect if it looks like CSV with commas
+    if (raw.includes(',')) {
+      const csvLines = raw.split('\n').map(l => l.trim()).filter(Boolean);
+      for (const line of csvLines) {
+        const parts = line.split(',').map(p => p.trim());
+        if (parts.length >= 2) {
+          const first = parts[0], second = parts[1];
+          // If first part is numeric, it's itemID,itemName
+          if (/^\d+$/.test(first)) {
+            parsed.push({ name: second, itemId: first });
+          } else {
+            parsed.push({ name: first, itemId: /^\d+$/.test(second) ? second : null });
+          }
+        } else if (parts.length === 1 && parts[0]) {
+          parsed.push({ name: parts[0], itemId: null });
+        }
+      }
+    }
+  }
+
+  // Fallback: one item per line
+  if (!parsed.length) {
+    const lines = raw.split('\n').map(l => l.trim()).filter(Boolean);
+    for (const line of lines) {
+      // Strip WoW item link format: |cff...|Hitem:ID...|h[Name]|h|r
+      const linkMatch = line.match(/\[([^\]]+)\]/);
+      if (linkMatch) {
+        const idMatch = line.match(/item:(\d+)/);
+        parsed.push({ name: linkMatch[1], itemId: idMatch ? idMatch[1] : null });
+      } else {
+        parsed.push({ name: line, itemId: null });
+      }
+    }
+  }
+
+  if (!parsed.length) {
+    document.getElementById('import-status').style.color = 'var(--red)';
+    document.getElementById('import-status').textContent = 'Could not parse any items. Check the format.';
+    return;
+  }
+
+  // Deduplicate by name
+  const existing = new Set(state.items.map(i => i.name.toLowerCase()));
+  let added = 0;
+  for (const p of parsed) {
+    if (!existing.has(p.name.toLowerCase())) {
+      state.items.push(makeItem(p.name, p.itemId));
+      existing.add(p.name.toLowerCase());
+      added++;
+    }
+  }
+
+  saveItems();
+  renderItems();
+  recalc();
+
+  const msg = added > 0
+    ? `✓ Imported ${added} item${added !== 1 ? 's' : ''}.${parsed.length - added > 0 ? ` (${parsed.length - added} duplicates skipped)` : ''}`
+    : 'No new items — all were duplicates.';
+  document.getElementById('import-status').style.color = added > 0 ? 'var(--green)' : 'var(--amber)';
+  document.getElementById('import-status').textContent = msg;
+  toast(msg);
+}
+
+function clearImport() {
+  document.getElementById('import-text').value = '';
+  document.getElementById('import-status').textContent = '';
+}
+
+function makeItem(name, itemId = null) {
+  return {
+    id: Date.now() + Math.random(),
+    name,
+    itemId,
+    bids: [],
+    status: 'open', // open | idle | closed | reserved
+    lastBidTime: Date.now(),
+    closedAt: null,
+  };
+}
+
+function addItemManual() {
+  const name = document.getElementById('manual-item-name').value.trim();
+  const itemId = document.getElementById('manual-item-id').value.trim() || null;
+  if (!name) return;
+  state.items.push(makeItem(name, itemId));
+  document.getElementById('manual-item-name').value = '';
+  document.getElementById('manual-item-id').value = '';
+  saveItems();
+  renderItems();
+  recalc();
+  toast('Item added: ' + name);
+}
+
+function startRaid() {
+  switchView('auction');
+  startPolling();
+}
+
+// ═══════════════════════════════════════════════════════
+//  ITEMS RENDER
+// ═══════════════════════════════════════════════════════
+function renderItems() {
+  const grid = document.getElementById('items-grid');
+  const idleMs = state.idleMinutes * 60 * 1000;
+
+  let items = state.items;
+  if (state.currentFilter !== 'all') {
+    items = items.filter(i => i.status === state.currentFilter);
+  }
+
+  if (!items.length) {
+    grid.innerHTML = '<div class="empty-state">No items match this filter.</div>';
+    updateMetrics();
+    return;
+  }
+
+  grid.innerHTML = items.map(item => renderItemCard(item, idleMs)).join('');
+  updateMetrics();
+}
+
+function renderItemCard(item, idleMs) {
+  const now = Date.now();
+  const sinceLastBid = now - (item.lastBidTime || now);
+  const idleFraction = Math.min(sinceLastBid / idleMs, 1);
+  const fillPct = Math.max(0, Math.round((1 - idleFraction) * 100));
+  const fillClass = idleFraction > 0.8 ? 'dead' : idleFraction > 0.5 ? 'warn' : '';
+  const timeLeft = Math.max(0, Math.round((idleMs - sinceLastBid) / 1000));
+  const timeStr = item.status === 'open' || item.status === 'idle'
+    ? (timeLeft > 60 ? Math.ceil(timeLeft/60) + 'm' : timeLeft + 's')
+    : '';
+
+  // Wowhead link
+  const itemDisplay = item.itemId
+    ? `<a class="wowhead-link" href="https://www.wowhead.com/classic/item=${item.itemId}" target="_blank" title="View on Wowhead">${item.name}</a>`
+    : item.name;
+
+  // Status badge
+  const statusLabels = { open: 'Open', idle: 'Idle', closed: 'Closed', reserved: 'Reserved' };
+  const statusClasses = { open: 'status-open', idle: 'status-idle', closed: 'status-closed', reserved: 'status-reserved' };
+
+  // Bids
+  const sortedBids = [...item.bids].sort((a,b) => b.amount - a.amount);
+  const bidsHtml = sortedBids.length
+    ? sortedBids.map((b, i) => `
+        <div class="bid-row">
+          <span class="bid-rank ${i===0?'first'}">${i===0?'★':i+1}</span>
+          <span class="bid-name ${i===0?'winner':''}">${b.raider}</span>
+          <span class="bid-amount ${i===0?'winner':''}">${b.amount.toLocaleString()}g</span>
+          ${state.isHost ? `<button class="btn btn-danger" onclick="removeBid('${item.id}','${b.raider}')">✕</button>` : ''}
+        </div>`)
+      .join('')
+    : '<div class="no-bids">No bids yet</div>';
+
+  // Bid form (raiders + host, open items only)
+  const bidFormHtml = item.status !== 'closed' && item.status !== 'reserved' ? `
+    <div class="bid-form">
+      ${state.raiders.length
+        ? `<select id="bidder-${item.id}"><option value="">Select raider...</option>${state.raiders.map(r=>`<option>${r}</option>`).join('')}</select>`
+        : `<input type="text" id="bidder-${item.id}" placeholder="Your name" style="flex:1;" />`}
+      <input type="number" id="amount-${item.id}" placeholder="Gold" min="1" style="width:90px;"
+        onkeydown="if(event.key==='Enter') placeBid('${item.id}')" />
+      <button class="btn btn-gold btn-sm" onclick="placeBid('${item.id}')">Bid</button>
+    </div>` : '';
+
+  // Host controls
+  const hostControlsHtml = state.isHost ? `
+    <div class="host-controls">
+      ${item.status !== 'closed' && item.status !== 'reserved'
+        ? `<button class="btn btn-outline btn-sm" onclick="closeItem('${item.id}')">🔒 Close</button>` : ''}
+      ${item.status === 'closed'
+        ? `<button class="btn btn-outline btn-sm" onclick="reopenItem('${item.id}')">🔓 Reopen</button>` : ''}
+      ${item.status !== 'reserved'
+        ? `<button class="btn btn-danger" onclick="hardReserveItem('${item.id}')">Hard Reserve</button>` : ''}
+      ${item.status === 'reserved'
+        ? `<button class="btn btn-outline btn-sm" onclick="unreserveItem('${item.id}')">Unreserve</button>` : ''}
+      <button class="btn btn-danger" onclick="removeItem('${item.id}')">Remove</button>
+    </div>` : '';
+
+  // Timer bar (only for open/idle)
+  const timerHtml = (item.status === 'open' || item.status === 'idle') ? `
+    <div class="item-timer">
+      <div class="timer-bar"><div class="timer-fill ${fillClass}" style="width:${fillPct}%"></div></div>
+      <span>${timeStr}</span>
+    </div>` : '';
+
+  return `
+    <div class="item-card ${item.status}" id="card-${item.id}">
+      <div class="item-card-header">
+        <div class="item-name">${itemDisplay}</div>
+        <span class="item-status ${statusClasses[item.status]}">${statusLabels[item.status]}</span>
+      </div>
+      <div class="item-card-body">
+        ${timerHtml}
+        <div class="bids-list">${bidsHtml}</div>
+        ${bidFormHtml}
+        ${hostControlsHtml}
+      </div>
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════════════
+//  BIDDING
+// ═══════════════════════════════════════════════════════
+function placeBid(itemId) {
+  const item = state.items.find(i => String(i.id) === String(itemId));
+  if (!item || item.status === 'closed' || item.status === 'reserved') return;
+
+  const bidderEl = document.getElementById('bidder-' + itemId);
+  const amountEl = document.getElementById('amount-' + itemId);
+  if (!bidderEl || !amountEl) return;
+
+  const raider = bidderEl.value.trim();
+  const amount = parseInt(amountEl.value);
+
+  if (!raider) { toast('Select or enter a raider name.'); return; }
+  if (!amount || amount <= 0) { toast('Enter a valid gold amount.'); return; }
+
+  // Check if this raider already bid — update if so
+  const existing = item.bids.find(b => b.raider === raider);
+  if (existing) {
+    existing.amount = amount;
+  } else {
+    item.bids.push({ raider, amount });
+  }
+
+  item.lastBidTime = Date.now();
+  item.status = 'open';
+
+  amountEl.value = '';
+  saveItems();
+  renderItems();
+  recalc();
+  toast(`Bid placed: ${raider} — ${amount.toLocaleString()}g`);
+  syncToBackend();
+}
+
+function removeBid(itemId, raider) {
+  const item = state.items.find(i => String(i.id) === String(itemId));
+  if (!item) return;
+  item.bids = item.bids.filter(b => b.raider !== raider);
+  if (item.bids.length > 0) item.lastBidTime = Date.now();
+  saveItems();
+  renderItems();
+  recalc();
+  toast('Bid removed.');
+  syncToBackend();
+}
+
+// ═══════════════════════════════════════════════════════
+//  ITEM CONTROLS
+// ═══════════════════════════════════════════════════════
+function closeItem(itemId) {
+  const item = state.items.find(i => String(i.id) === String(itemId));
+  if (item) { item.status = 'closed'; item.closedAt = Date.now(); }
+  saveItems(); renderItems(); recalc(); syncToBackend();
+}
+
+function reopenItem(itemId) {
+  const item = state.items.find(i => String(i.id) === String(itemId));
+  if (item) { item.status = 'open'; item.lastBidTime = Date.now(); item.closedAt = null; }
+  saveItems(); renderItems(); recalc(); syncToBackend();
+}
+
+function hardReserveItem(itemId) {
+  const item = state.items.find(i => String(i.id) === String(itemId));
+  if (item) { item.status = 'reserved'; }
+  saveItems(); renderItems(); recalc(); syncToBackend();
+  toast('Item marked as hard reserved.');
+}
+
+function unreserveItem(itemId) {
+  const item = state.items.find(i => String(i.id) === String(itemId));
+  if (item) { item.status = 'open'; item.lastBidTime = Date.now(); }
+  saveItems(); renderItems(); recalc(); syncToBackend();
+}
+
+function removeItem(itemId) {
+  if (!confirm('Remove this item entirely?')) return;
+  state.items = state.items.filter(i => String(i.id) !== String(itemId));
+  saveItems(); renderItems(); recalc(); syncToBackend();
+}
+
+function closeAll() {
+  state.items.forEach(i => { if (i.status !== 'reserved') { i.status = 'closed'; i.closedAt = Date.now(); }});
+  saveItems(); renderItems(); recalc(); syncToBackend();
+}
+
+function reopenAll() {
+  state.items.forEach(i => { if (i.status !== 'reserved') { i.status = 'open'; i.lastBidTime = Date.now(); i.closedAt = null; }});
+  saveItems(); renderItems(); recalc(); syncToBackend();
+}
+
+// ═══════════════════════════════════════════════════════
+//  TIMERS & IDLE DETECTION
+// ═══════════════════════════════════════════════════════
+function startTimers() {
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    const idleMs = (parseInt(document.getElementById('idle-timer-slider').value) || 2) * 60 * 1000;
+    let changed = false;
+    for (const item of state.items) {
+      if (item.status === 'open' || item.status === 'idle') {
+        const age = Date.now() - (item.lastBidTime || Date.now());
+        const shouldBeIdle = age >= idleMs;
+        if (shouldBeIdle && item.status === 'open') { item.status = 'idle'; changed = true; }
+        if (!shouldBeIdle && item.status === 'idle') { item.status = 'open'; changed = true; }
+      }
+    }
+    if (changed) { saveItems(); }
+    renderItems();
+  }, 1000);
+}
+
+// ═══════════════════════════════════════════════════════
+//  CALCULATIONS
+// ═══════════════════════════════════════════════════════
+function recalc() {
+  const hostPct = parseInt(document.getElementById('host-cut-slider').value) / 100;
+  state.hostCutPct = Math.round(hostPct * 100);
+  localStorage.setItem('gdkp_hostcut', state.hostCutPct);
+  state.idleMinutes = parseInt(document.getElementById('idle-timer-slider').value);
+  localStorage.setItem('gdkp_idle', state.idleMinutes);
+
+  const closedItems = state.items.filter(i => i.status === 'closed' && i.bids.length > 0);
+  const totalPot = closedItems.reduce((s, i) => s + Math.max(...i.bids.map(b => b.amount)), 0);
+  const hostCut = Math.round(totalPot * hostPct);
+  const pool = totalPot - hostCut;
+  const perRaider = state.raiders.length > 0 ? Math.floor(pool / state.raiders.length) : 0;
+  const totalItems = state.items.filter(i => i.status !== 'reserved').length;
+  const closedCount = state.items.filter(i => i.status === 'closed').length;
+
+  // Auction metrics
+  safe('m-pot', totalPot.toLocaleString() + 'g');
+  safe('m-host-cut', hostCut.toLocaleString() + 'g');
+  safe('m-per-raider', perRaider.toLocaleString() + 'g');
+  safe('m-items', totalItems);
+  safe('m-closed', closedCount);
+
+  // Payout metrics
+  safe('p-pot', totalPot.toLocaleString() + 'g');
+  safe('p-host', hostCut.toLocaleString() + 'g');
+  safe('p-pool', pool.toLocaleString() + 'g');
+  safe('p-each', perRaider.toLocaleString() + 'g');
+  safe('p-host-pct', state.hostCutPct + '%');
+  safe('p-host-amt', hostCut.toLocaleString() + 'g');
+}
+
+function safe(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = val;
+}
+
+// ═══════════════════════════════════════════════════════
+//  METRICS
+// ═══════════════════════════════════════════════════════
+function updateMetrics() { recalc(); }
+
+// ═══════════════════════════════════════════════════════
+//  PAYOUT VIEW
+// ═══════════════════════════════════════════════════════
+function renderPayout() {
+  recalc();
+  const hostPct = state.hostCutPct / 100;
+  const closedItems = state.items.filter(i => i.status === 'closed' && i.bids.length > 0);
+  const totalPot = closedItems.reduce((s, i) => s + Math.max(...i.bids.map(b => b.amount)), 0);
+  const hostCut = Math.round(totalPot * hostPct);
+  const pool = totalPot - hostCut;
+  const perRaider = state.raiders.length > 0 ? Math.floor(pool / state.raiders.length) : 0;
+
+  const openItems = state.items.filter(i => i.status === 'open' || i.status === 'idle');
+  const notice = document.getElementById('payout-notice');
+  if (openItems.length > 0) {
+    notice.style.display = 'block';
+    notice.textContent = `⚠ ${openItems.length} item${openItems.length!==1?'s are':' is'} still open. Payout is based on closed items only.`;
+  } else {
+    notice.style.display = 'none';
+  }
+
+  const tbody = document.getElementById('payout-body');
+  if (!state.raiders.length) {
+    tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No raiders added in Setup.</td></tr>';
+    return;
+  }
+
+  let paidCount = 0;
+  const rows = state.raiders.map(raider => {
+    const spent = closedItems
+      .filter(i => {
+        const top = [...i.bids].sort((a,b) => b.amount - a.amount)[0];
+        return top && top.raider === raider;
+      })
+      .reduce((s, i) => {
+        const top = [...i.bids].sort((a,b) => b.amount - a.amount)[0];
+        return s + top.amount;
+      }, 0);
+
+    const net = perRaider - spent;
+    const paid = !!state.paidOut[raider];
+    if (paid) paidCount++;
+
+    return `
+      <tr class="${paid ? 'paid' : ''}">
+        <td class="payout-name">${raider}</td>
+        <td class="payout-gold">${perRaider.toLocaleString()}g</td>
+        <td class="payout-spent">${spent > 0 ? '-' + spent.toLocaleString() + 'g' : '—'}</td>
+        <td class="payout-gold ${net < 0 ? 'negative' : ''}">${net >= 0 ? '+' : ''}${net.toLocaleString()}g</td>
+        <td>
+          ${state.isHost
+            ? paid
+              ? `<button class="btn btn-paid" onclick="togglePaid('${raider}')">✓ Paid</button>`
+              : `<button class="btn btn-success btn-sm" onclick="togglePaid('${raider}')">Mark Paid</button>`
+            : paid ? '<span style="color:var(--green);font-size:13px;">✓ Paid</span>' : '<span style="color:var(--text-dim);font-size:13px;">Pending</span>'
+          }
+        </td>
+      </tr>`;
+  }).join('');
+
+  tbody.innerHTML = rows;
+
+  const paidEl = document.getElementById('paid-count');
+  if (paidEl) paidEl.textContent = `— ${paidCount}/${state.raiders.length} paid`;
+}
+
+function togglePaid(raider) {
+  if (state.paidOut[raider]) {
+    delete state.paidOut[raider];
+  } else {
+    state.paidOut[raider] = Date.now();
+  }
+  localStorage.setItem('gdkp_paid', JSON.stringify(state.paidOut));
+  renderPayout();
+}
+
+// ═══════════════════════════════════════════════════════
+//  EXPORT CSV
+// ═══════════════════════════════════════════════════════
+function exportCSV() {
+  const hostPct = state.hostCutPct / 100;
+  const closedItems = state.items.filter(i => i.status === 'closed' && i.bids.length > 0);
+  const totalPot = closedItems.reduce((s, i) => s + Math.max(...i.bids.map(b => b.amount)), 0);
+  const hostCut = Math.round(totalPot * hostPct);
+  const pool = totalPot - hostCut;
+  const perRaider = state.raiders.length > 0 ? Math.floor(pool / state.raiders.length) : 0;
+
+  let csv = 'Raider,Earned,Spent,Net,Paid\n';
+  for (const raider of state.raiders) {
+    const spent = closedItems
+      .filter(i => {
+        const top = [...i.bids].sort((a,b) => b.amount - a.amount)[0];
+        return top && top.raider === raider;
+      })
+      .reduce((s, i) => {
+        const top = [...i.bids].sort((a,b) => b.amount - a.amount)[0];
+        return s + top.amount;
+      }, 0);
+    const net = perRaider - spent;
+    const paid = state.paidOut[raider] ? 'Yes' : 'No';
+    csv += `${raider},${perRaider},${spent},${net},${paid}\n`;
+  }
+  csv += `Host (${state.hostCutPct}%),${hostCut},0,${hostCut},\n`;
+
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'gdkp-payout.csv';
+  a.click();
+  toast('CSV exported.');
+}
+
+// ═══════════════════════════════════════════════════════
+//  BACKEND SYNC (Google Apps Script)
+// ═══════════════════════════════════════════════════════
+async function syncToBackend() {
+  if (!state.backendUrl) return;
+  try {
+    await fetch(state.backendUrl, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'sync',
+        raiders: state.raiders,
+        items: state.items,
+        hostCutPct: state.hostCutPct,
+        paidOut: state.paidOut,
+      })
+    });
+  } catch(e) { /* silent fail */ }
+}
+
+function startPolling() {
+  if (!state.backendUrl) return;
+  if (pollInterval) clearInterval(pollInterval);
+  pollInterval = setInterval(async () => {
+    try {
+      const r = await fetch(state.backendUrl + '?action=get');
+      const d = await r.json();
+      if (d.items) { state.items = d.items; }
+      if (d.raiders) { state.raiders = d.raiders; }
+      if (d.paidOut) { state.paidOut = d.paidOut; }
+      renderItems();
+      renderRaiders();
+      recalc();
+    } catch(e) { /* silent */ }
+  }, 4000);
+}
+
+// ═══════════════════════════════════════════════════════
+//  PERSISTENCE
+// ═══════════════════════════════════════════════════════
+function saveItems() {
+  localStorage.setItem('gdkp_items', JSON.stringify(state.items));
+}
+
+// ═══════════════════════════════════════════════════════
+//  TOAST
+// ═══════════════════════════════════════════════════════
+let toastTimer;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2500);
+}
+</script>
+
+<!-- ═══════════════════════════════════════════════════
+     GOOGLE APPS SCRIPT INSTRUCTIONS (comment block)
+     ═══════════════════════════════════════════════════
+
+TO SET UP THE GOOGLE SHEETS BACKEND:
+
+1. Go to sheets.google.com and create a new spreadsheet.
+2. Click Extensions → Apps Script.
+3. Delete any existing code and paste in the code from gdkp-backend.gs
+4. Click Deploy → New Deployment → Web App
+   - Execute as: Me
+   - Who has access: Anyone
+5. Copy the deployment URL and paste it into the Setup panel on this site.
+
+The sheet will automatically track all items, bids, and raid state.
+Raiders who visit the site will see live updates every 4 seconds.
+
+═══════════════════════════════════════════════════════ -->
+</body>
+</html>
