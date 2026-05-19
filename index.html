@@ -42,18 +42,15 @@
     min-height: 100vh;
   }
 
-  /* Subtle parchment texture overlay */
   body::before {
     content: '';
     position: fixed;
     inset: 0;
-    background-image:
-      repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.01) 2px, rgba(255,255,255,0.01) 4px);
+    background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.01) 2px, rgba(255,255,255,0.01) 4px);
     pointer-events: none;
     z-index: 0;
   }
 
-  /* ── HEADER ── */
   header {
     border-bottom: 1px solid var(--gold-border);
     padding: 1rem 2rem;
@@ -82,15 +79,12 @@
 
   .header-right { display: flex; align-items: center; gap: 12px; }
 
-  /* ── VIEWS ── */
   .view { display: none; padding: 2rem; max-width: 1100px; margin: 0 auto; position: relative; z-index: 1; }
   .view.active { display: block; }
 
-  /* ── SETUP VIEW ── */
   .setup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
   @media (max-width: 700px) { .setup-grid { grid-template-columns: 1fr; } }
 
-  /* ── CARDS ── */
   .card {
     background: var(--bg-card);
     border: 1px solid rgba(201,168,76,0.12);
@@ -111,7 +105,6 @@
     border-bottom: 1px solid var(--gold-border);
   }
 
-  /* ── INPUTS ── */
   input, select, textarea {
     background: var(--bg-input);
     border: 1px solid rgba(201,168,76,0.2);
@@ -125,15 +118,12 @@
     width: 100%;
   }
 
-  input:focus, select:focus, textarea:focus {
-    border-color: var(--gold);
-  }
+  input:focus, select:focus, textarea:focus { border-color: var(--gold); }
 
   input::placeholder { color: var(--text-dim); }
 
   select option { background: #1a1a24; }
 
-  /* ── BUTTONS ── */
   .btn {
     font-family: 'Cinzel', serif;
     font-size: 11px;
@@ -153,397 +143,110 @@
 
   .btn:active { transform: scale(0.97); }
 
-  .btn-gold {
-    background: var(--gold);
-    color: #1a1200;
-    border-color: var(--gold);
-  }
+  .btn-gold { background: var(--gold); color: #1a1200; border-color: var(--gold); }
   .btn-gold:hover { background: var(--gold-light); border-color: var(--gold-light); }
 
-  .btn-outline {
-    background: transparent;
-    color: var(--gold);
-    border-color: var(--gold-border);
-  }
+  .btn-outline { background: transparent; color: var(--gold); border-color: var(--gold-border); }
   .btn-outline:hover { border-color: var(--gold); background: var(--gold-dim); }
 
-  .btn-danger {
-    background: transparent;
-    color: var(--red);
-    border-color: rgba(192,57,43,0.3);
-    font-size: 10px;
-    padding: 4px 10px;
-  }
+  .btn-danger { background: transparent; color: var(--red); border-color: rgba(192,57,43,0.3); font-size: 10px; padding: 4px 10px; }
   .btn-danger:hover { background: var(--red-dim); border-color: var(--red); }
 
-  .btn-sm {
-    font-size: 10px;
-    padding: 4px 10px;
-  }
+  .btn-sm { font-size: 10px; padding: 4px 10px; }
 
-  .btn-success {
-    background: transparent;
-    color: var(--green);
-    border-color: rgba(39,174,96,0.3);
-  }
+  .btn-success { background: transparent; color: var(--green); border-color: rgba(39,174,96,0.3); }
   .btn-success:hover { background: var(--green-dim); border-color: var(--green); }
 
-  .btn-paid {
-    background: var(--green-dim);
-    color: var(--green);
-    border-color: rgba(39,174,96,0.4);
-    font-size: 10px;
-    padding: 4px 10px;
-  }
+  .btn-paid { background: var(--green-dim); color: var(--green); border-color: rgba(39,174,96,0.4); font-size: 10px; padding: 4px 10px; }
 
-  /* ── TAGS ── */
   .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
-  .tag {
-    background: var(--bg-raised);
-    border: 1px solid var(--gold-border);
-    border-radius: 3px;
-    padding: 3px 10px;
-    font-size: 13px;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .tag-remove {
-    color: var(--text-dim);
-    cursor: pointer;
-    font-size: 16px;
-    line-height: 1;
-    background: none;
-    border: none;
-    color: var(--text-muted);
-    transition: color 0.15s;
-  }
+  .tag { background: var(--bg-raised); border: 1px solid var(--gold-border); border-radius: 3px; padding: 3px 10px; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; }
+  .tag-remove { color: var(--text-dim); cursor: pointer; font-size: 16px; line-height: 1; background: none; border: none; color: var(--text-muted); transition: color 0.15s; }
   .tag-remove:hover { color: var(--red); }
 
-  /* ── ROW UTILS ── */
   .row { display: flex; gap: 8px; align-items: flex-start; }
   .row-center { display: flex; gap: 8px; align-items: center; }
   .flex1 { flex: 1; }
   .mb8 { margin-bottom: 8px; }
-  .mb12 { margin-bottom: 12px; }
-  .mb16 { margin-bottom: 16px; }
-  .mt8 { margin-top: 8px; }
-  .mt12 { margin-top: 12px; }
-  .mt16 { margin-top: 16px; }
 
-  /* ── SECTION HEADINGS ── */
-  h2 {
-    font-family: 'Cinzel', serif;
-    font-size: 22px;
-    font-weight: 600;
-    color: var(--gold);
-    margin-bottom: 1.5rem;
-    letter-spacing: 0.05em;
-  }
+  h2 { font-family: 'Cinzel', serif; font-size: 22px; font-weight: 600; color: var(--gold); margin-bottom: 1.5rem; letter-spacing: 0.05em; }
+  h3 { font-family: 'Cinzel', serif; font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 0.75rem; }
 
-  h3 {
-    font-family: 'Cinzel', serif;
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text);
-    margin-bottom: 0.75rem;
-  }
+  #pin-gate { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; z-index: 200; backdrop-filter: blur(6px); }
 
-  /* ── PIN GATE ── */
-  #pin-gate {
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,0.85);
-    display: flex; align-items: center; justify-content: center;
-    z-index: 200;
-    backdrop-filter: blur(6px);
-  }
+  .pin-box { background: var(--bg-card); border: 1px solid var(--gold-border); border-radius: var(--radius-lg); padding: 2rem; width: 320px; text-align: center; }
 
-  .pin-box {
-    background: var(--bg-card);
-    border: 1px solid var(--gold-border);
-    border-radius: var(--radius-lg);
-    padding: 2rem;
-    width: 320px;
-    text-align: center;
-  }
-
-  .pin-box h3 {
-    font-family: 'Cinzel', serif;
-    font-size: 16px;
-    color: var(--gold);
-    margin-bottom: 0.5rem;
-  }
-
-  .pin-box p {
-    color: var(--text-muted);
-    font-size: 14px;
-    margin-bottom: 1rem;
-  }
-
-  .pin-box input {
-    text-align: center;
-    font-size: 24px;
-    letter-spacing: 0.3em;
-    margin-bottom: 1rem;
-  }
+  .pin-box h3 { font-family: 'Cinzel', serif; font-size: 16px; color: var(--gold); margin-bottom: 0.5rem; }
+  .pin-box p { color: var(--text-muted); font-size: 14px; margin-bottom: 1rem; }
+  .pin-box input { text-align: center; font-size: 24px; letter-spacing: 0.3em; margin-bottom: 1rem; }
 
   .pin-error { color: var(--red); font-size: 13px; margin-top: 8px; min-height: 20px; }
 
-  /* ── NAV TABS ── */
-  .nav-tabs {
-    display: flex;
-    gap: 2px;
-    background: var(--bg-card);
-    border: 1px solid var(--gold-border);
-    border-radius: var(--radius);
-    padding: 3px;
-    margin-bottom: 1.5rem;
-  }
+  .metrics-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 1.5rem; }
 
-  .nav-tab {
-    font-family: 'Cinzel', serif;
-    font-size: 11px;
-    letter-spacing: 0.1em;
-    padding: 7px 16px;
-    border-radius: 2px;
-    cursor: pointer;
-    color: var(--text-muted);
-    transition: all 0.15s;
-    border: none;
-    background: none;
-    text-transform: uppercase;
-  }
+  .metric { background: var(--bg-card); border: 1px solid rgba(201,168,76,0.12); border-radius: var(--radius-lg); padding: 1rem; }
 
-  .nav-tab.active {
-    background: var(--gold);
-    color: #1a1200;
-    font-weight: 600;
-  }
+  .metric-label { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); font-family: 'Cinzel', serif; margin-bottom: 4px; }
 
-  .nav-tab:not(.active):hover { color: var(--gold); }
+  .metric-value { font-size: 26px; font-weight: 600; color: var(--gold); line-height: 1.2; }
 
-  /* ── METRICS ── */
-  .metrics-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 10px;
-    margin-bottom: 1.5rem;
-  }
+  .items-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1rem; }
 
-  .metric {
-    background: var(--bg-card);
-    border: 1px solid rgba(201,168,76,0.12);
-    border-radius: var(--radius-lg);
-    padding: 1rem;
-  }
-
-  .metric-label {
-    font-size: 11px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    font-family: 'Cinzel', serif;
-    margin-bottom: 4px;
-  }
-
-  .metric-value {
-    font-size: 26px;
-    font-weight: 600;
-    color: var(--gold);
-    line-height: 1.2;
-  }
-
-  /* ── ITEM CARDS ── */
-  .items-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 1rem;
-  }
-
-  .item-card {
-    background: var(--bg-card);
-    border: 1px solid rgba(201,168,76,0.12);
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-    transition: border-color 0.2s;
-  }
+  .item-card { background: var(--bg-card); border: 1px solid rgba(201,168,76,0.12); border-radius: var(--radius-lg); overflow: hidden; transition: border-color 0.2s; }
 
   .item-card.idle { border-color: rgba(230,126,34,0.5); }
   .item-card.closed { border-color: rgba(74,69,64,0.4); opacity: 0.7; }
   .item-card.hard-reserved { border-color: rgba(192,57,43,0.4); opacity: 0.6; }
 
-  .item-card-header {
-    padding: 12px 14px;
-    border-bottom: 1px solid rgba(201,168,76,0.1);
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 8px;
-  }
+  .item-card-header { padding: 12px 14px; border-bottom: 1px solid rgba(201,168,76,0.1); display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
 
-  .item-name {
-    font-family: 'Cinzel', serif;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--gold-light);
-    line-height: 1.3;
-    flex: 1;
-  }
+  .item-name { font-family: 'Cinzel', serif; font-size: 13px; font-weight: 600; color: var(--gold-light); line-height: 1.3; flex: 1; }
 
-  .item-name a {
-    color: inherit;
-    text-decoration: none;
-  }
+  .item-name a { color: inherit; text-decoration: none; }
   .item-name a:hover { text-decoration: underline; }
 
-  .item-status {
-    font-family: 'Cinzel', serif;
-    font-size: 9px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    padding: 3px 8px;
-    border-radius: 2px;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
+  .item-status { font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 8px; border-radius: 2px; white-space: nowrap; flex-shrink: 0; }
 
   .status-open { background: var(--green-dim); color: var(--green); border: 1px solid rgba(39,174,96,0.3); }
   .status-idle { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(230,126,34,0.4); animation: pulse-amber 2s infinite; }
   .status-closed { background: var(--bg-raised); color: var(--text-muted); border: 1px solid rgba(255,255,255,0.08); }
   .status-reserved { background: var(--red-dim); color: var(--red); border: 1px solid rgba(192,57,43,0.3); }
 
-  @keyframes pulse-amber {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.6; }
-  }
+  @keyframes pulse-amber { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
 
   .item-card-body { padding: 12px 14px; }
 
-  /* Timer */
-  .item-timer {
-    font-size: 12px;
-    color: var(--text-muted);
-    margin-bottom: 8px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .timer-bar {
-    flex: 1;
-    height: 3px;
-    background: rgba(255,255,255,0.06);
-    border-radius: 2px;
-    overflow: hidden;
-  }
-
-  .timer-fill {
-    height: 100%;
-    background: var(--green);
-    border-radius: 2px;
-    transition: width 1s linear, background 0.5s;
-  }
-
-  .timer-fill.warn { background: var(--amber); }
-  .timer-fill.dead { background: var(--red); }
-
-  /* Bids list */
   .bids-list { margin-bottom: 10px; }
 
-  .bid-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 5px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.04);
-    font-size: 14px;
-    gap: 8px;
-  }
-
+  .bid-row { display: flex; align-items: center; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 14px; gap: 8px; }
   .bid-row:last-child { border-bottom: none; }
 
-  .bid-rank {
-    font-family: 'Cinzel', serif;
-    font-size: 10px;
-    color: var(--text-dim);
-    width: 20px;
-    flex-shrink: 0;
-  }
-
+  .bid-rank { font-family: 'Cinzel', serif; font-size: 10px; color: var(--text-dim); width: 20px; flex-shrink: 0; }
   .bid-rank.first { color: var(--gold); }
 
   .bid-name { flex: 1; color: var(--text); }
   .bid-name.winner { color: var(--gold-light); font-weight: 600; }
 
-  .bid-amount {
-    color: var(--green);
-    font-weight: 600;
-    font-size: 15px;
-    min-width: 60px;
-    text-align: right;
-  }
-
+  .bid-amount { color: var(--green); font-weight: 600; font-size: 15px; min-width: 60px; text-align: right; }
   .bid-amount.winner { color: var(--gold); }
 
   .no-bids { color: var(--text-dim); font-size: 13px; font-style: italic; padding: 4px 0; }
 
-  /* Bid form */
-  .bid-form {
-    display: flex;
-    gap: 6px;
-    margin-top: 10px;
-  }
-
+  .bid-form { display: flex; gap: 6px; margin-top: 10px; }
   .bid-form select { flex: 1; }
   .bid-form input[type=number] { width: 90px; flex-shrink: 0; }
 
-  /* Host controls */
-  .host-controls {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-top: 10px;
-    padding-top: 10px;
-    border-top: 1px solid rgba(255,255,255,0.05);
-  }
+  .host-controls { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.05); }
 
-  /* ── IMPORT PANEL ── */
-  .import-area {
-    width: 100%;
-    height: 140px;
-    resize: vertical;
-    font-family: 'Courier New', monospace;
-    font-size: 12px;
-    line-height: 1.4;
-  }
+  .import-area { width: 100%; height: 140px; resize: vertical; font-family: 'Courier New', monospace; font-size: 12px; line-height: 1.4; }
 
-  /* ── PAYOUT VIEW ── */
-  .payout-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 15px;
-  }
+  .payout-table { width: 100%; border-collapse: collapse; font-size: 15px; }
 
-  .payout-table th {
-    font-family: 'Cinzel', serif;
-    font-size: 10px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    padding: 8px 12px;
-    text-align: left;
-    border-bottom: 1px solid var(--gold-border);
-    font-weight: 400;
-  }
+  .payout-table th { font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); padding: 8px 12px; text-align: left; border-bottom: 1px solid var(--gold-border); font-weight: 400; }
 
-  .payout-table td {
-    padding: 10px 12px;
-    border-bottom: 1px solid rgba(255,255,255,0.04);
-    vertical-align: middle;
-  }
+  .payout-table td { padding: 10px 12px; border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: middle; }
 
   .payout-table tr:hover td { background: rgba(255,255,255,0.02); }
-
   .payout-table tr.paid td { opacity: 0.5; }
 
   .payout-name { font-weight: 600; }
@@ -553,132 +256,37 @@
   .payout-host-row td { color: var(--gold-light); }
   .payout-host-row .payout-gold { color: var(--gold-light); font-size: 20px; }
 
-  .divider {
-    border: none;
-    border-top: 1px solid rgba(201,168,76,0.15);
-    margin: 1.5rem 0;
-  }
+  .divider { border: none; border-top: 1px solid rgba(201,168,76,0.15); margin: 1.5rem 0; }
 
-  /* ── NOTICE BANNER ── */
-  .notice {
-    background: var(--amber-dim);
-    border: 1px solid rgba(230,126,34,0.3);
-    border-radius: var(--radius);
-    padding: 10px 14px;
-    font-size: 13px;
-    color: var(--amber);
-    margin-bottom: 1rem;
-  }
+  .notice { background: var(--amber-dim); border: 1px solid rgba(230,126,34,0.3); border-radius: var(--radius); padding: 10px 14px; font-size: 13px; color: var(--amber); margin-bottom: 1rem; }
 
-  .notice.info {
-    background: rgba(41,128,185,0.1);
-    border-color: rgba(41,128,185,0.3);
-    color: #5dade2;
-  }
+  .notice.info { background: rgba(41,128,185,0.1); border-color: rgba(41,128,185,0.3); color: #5dade2; }
 
-  /* ── PIN BADGE ── */
-  .pin-display {
-    font-family: 'Cinzel', serif;
-    font-size: 11px;
-    letter-spacing: 0.1em;
-    color: var(--text-muted);
-    background: var(--bg-card);
-    border: 1px solid var(--gold-border);
-    border-radius: var(--radius);
-    padding: 5px 10px;
-  }
+  .pin-display { font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: 0.1em; color: var(--text-muted); background: var(--bg-card); border: 1px solid var(--gold-border); border-radius: var(--radius); padding: 5px 10px; }
 
-  /* ── MODAL ── */
-  .modal-overlay {
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,0.7);
-    z-index: 150;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    backdrop-filter: blur(4px);
-  }
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 150; display: none; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
   .modal-overlay.open { display: flex; }
 
-  .modal {
-    background: var(--bg-card);
-    border: 1px solid var(--gold-border);
-    border-radius: var(--radius-lg);
-    padding: 1.75rem;
-    width: 400px;
-    max-width: 90vw;
-  }
+  .modal { background: var(--bg-card); border: 1px solid var(--gold-border); border-radius: var(--radius-lg); padding: 1.75rem; width: 400px; max-width: 90vw; }
 
   .modal h3 { color: var(--gold); margin-bottom: 1rem; }
 
-  /* ── EMPTY STATE ── */
-  .empty-state {
-    text-align: center;
-    padding: 3rem 2rem;
-    color: var(--text-dim);
-    font-style: italic;
-    font-size: 15px;
-  }
+  .empty-state { text-align: center; padding: 3rem 2rem; color: var(--text-dim); font-style: italic; font-size: 15px; }
 
-  /* ── SLIDER ── */
-  .slider-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-top: 8px;
-  }
+  .slider-row { display: flex; align-items: center; gap: 12px; margin-top: 8px; }
 
-  input[type=range] {
-    flex: 1;
-    height: 4px;
-    background: var(--bg-raised);
-    border: none;
-    padding: 0;
-    accent-color: var(--gold);
-    cursor: pointer;
-  }
+  input[type=range] { flex: 1; height: 4px; background: var(--bg-raised); border: none; padding: 0; accent-color: var(--gold); cursor: pointer; }
 
-  .slider-val {
-    font-family: 'Cinzel', serif;
-    font-size: 14px;
-    color: var(--gold);
-    min-width: 36px;
-    text-align: right;
-  }
+  .slider-val { font-family: 'Cinzel', serif; font-size: 14px; color: var(--gold); min-width: 36px; text-align: right; }
 
-  /* scrollbar */
   ::-webkit-scrollbar { width: 6px; }
   ::-webkit-scrollbar-track { background: var(--bg); }
   ::-webkit-scrollbar-thumb { background: var(--gold-dark); border-radius: 3px; }
 
-  /* ── TOAST ── */
-  #toast {
-    position: fixed;
-    bottom: 1.5rem;
-    right: 1.5rem;
-    background: var(--bg-raised);
-    border: 1px solid var(--gold-border);
-    border-radius: var(--radius);
-    padding: 10px 16px;
-    font-size: 14px;
-    color: var(--text);
-    z-index: 300;
-    transform: translateY(60px);
-    opacity: 0;
-    transition: all 0.3s;
-    pointer-events: none;
-  }
+  #toast { position: fixed; bottom: 1.5rem; right: 1.5rem; background: var(--bg-raised); border: 1px solid var(--gold-border); border-radius: var(--radius); padding: 10px 16px; font-size: 14px; color: var(--text); z-index: 300; transform: translateY(60px); opacity: 0; transition: all 0.3s; pointer-events: none; }
   #toast.show { transform: translateY(0); opacity: 1; }
 
-  .label-sm {
-    font-family: 'Cinzel', serif;
-    font-size: 10px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    margin-bottom: 4px;
-    display: block;
-  }
+  .label-sm { font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; display: block; }
 
   .host-only { display: none; }
   body.is-host .host-only { display: flex; }
@@ -688,43 +296,12 @@
   .wowhead-link { color: var(--gold-light); text-decoration: none; }
   .wowhead-link:hover { text-decoration: underline; }
 
-  .cut-badge {
-    font-family: 'Cinzel', serif;
-    font-size: 10px;
-    padding: 2px 8px;
-    border-radius: 2px;
-    background: var(--gold-dim);
-    color: var(--gold);
-    border: 1px solid var(--gold-border);
-    margin-left: 8px;
-  }
+  .cut-badge { font-family: 'Cinzel', serif; font-size: 10px; padding: 2px 8px; border-radius: 2px; background: var(--gold-dim); color: var(--gold); border: 1px solid var(--gold-border); margin-left: 8px; }
 
-  .filter-row {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 1rem;
-    flex-wrap: wrap;
-    align-items: center;
-  }
+  .filter-row { display: flex; gap: 8px; margin-bottom: 1rem; flex-wrap: wrap; align-items: center; }
 
-  .filter-btn {
-    font-family: 'Cinzel', serif;
-    font-size: 10px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    padding: 5px 12px;
-    border-radius: var(--radius);
-    border: 1px solid rgba(255,255,255,0.1);
-    background: transparent;
-    color: var(--text-muted);
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-  .filter-btn.active, .filter-btn:hover {
-    border-color: var(--gold-border);
-    color: var(--gold);
-    background: var(--gold-dim);
-  }
+  .filter-btn { font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; padding: 5px 12px; border-radius: var(--radius); border: 1px solid rgba(255,255,255,0.1); background: transparent; color: var(--text-muted); cursor: pointer; transition: all 0.15s; }
+  .filter-btn.active, .filter-btn:hover { border-color: var(--gold-border); color: var(--gold); background: var(--gold-dim); }
 </style>
 </head>
 <body>
@@ -764,10 +341,8 @@
 <!-- SETUP VIEW -->
 <div id="view-setup" class="view active">
   <h2>Raid Setup</h2>
-
   <div class="setup-grid">
     <div>
-      <!-- PIN -->
       <div class="card">
         <div class="card-title">Host PIN</div>
         <p style="font-size:13px; color:var(--text-muted); margin-bottom:10px;">Set a PIN that only you know. Raiders enter without a PIN.</p>
@@ -777,29 +352,21 @@
         </div>
         <div id="pin-save-msg" style="font-size:13px; color:var(--green); margin-top:6px; min-height:18px;"></div>
       </div>
-
-      <!-- HOST CUT -->
       <div class="card">
         <div class="card-title">Host Cut</div>
         <div class="slider-row">
-          <input type="range" min="0" max="30" step="1" value="10" id="host-cut-slider"
-            oninput="document.getElementById('host-cut-display').textContent=this.value+'%'; state.hostCutPct=parseInt(this.value); saveState(); recalc();" />
+          <input type="range" min="0" max="30" step="1" value="10" id="host-cut-slider" oninput="document.getElementById('host-cut-display').textContent=this.value+'%'; state.hostCutPct=parseInt(this.value); saveState(); recalc();" />
           <span class="slider-val" id="host-cut-display">10%</span>
         </div>
       </div>
-
-      <!-- IDLE TIMER -->
       <div class="card">
         <div class="card-title">Idle Timer</div>
         <p style="font-size:13px; color:var(--text-muted); margin-bottom:8px;">Mark item as idle after this many minutes with no new bids.</p>
         <div class="slider-row">
-          <input type="range" min="1" max="10" step="1" value="2" id="idle-timer-slider"
-            oninput="document.getElementById('idle-timer-display').textContent=this.value+' min'; state.idleMinutes=parseInt(this.value); saveState();" />
+          <input type="range" min="1" max="10" step="1" value="2" id="idle-timer-slider" oninput="document.getElementById('idle-timer-display').textContent=this.value+' min'; state.idleMinutes=parseInt(this.value); saveState();" />
           <span class="slider-val" id="idle-timer-display">2 min</span>
         </div>
       </div>
-
-      <!-- GOOGLE APPS SCRIPT URL -->
       <div class="card">
         <div class="card-title">Backend URL</div>
         <p style="font-size:13px; color:var(--text-muted); margin-bottom:8px;">Paste your Google Apps Script web app URL here to enable persistent storage.</p>
@@ -811,22 +378,17 @@
         <div id="backend-status" style="font-size:13px; margin-top:6px; min-height:18px;"></div>
       </div>
     </div>
-
     <div>
-      <!-- RAIDERS -->
       <div class="card">
         <div class="card-title">Raiders</div>
         <div class="row mb8">
-          <input type="text" id="raider-input" placeholder="Character name" style="flex:1;"
-            onkeydown="if(event.key==='Enter') addRaider()" />
+          <input type="text" id="raider-input" placeholder="Character name" style="flex:1;" onkeydown="if(event.key==='Enter') addRaider()" />
           <button class="btn btn-gold" onclick="addRaider()">Add</button>
         </div>
         <div class="tags" id="raider-tags">
           <span style="font-size:13px; color:var(--text-dim); font-style:italic;">No raiders added yet.</span>
         </div>
       </div>
-
-      <!-- IMPORT -->
       <div class="card">
         <div class="card-title">Import Loot from Gargul</div>
         <p style="font-size:13px; color:var(--text-muted); margin-bottom:8px;">
@@ -839,18 +401,14 @@
         </div>
         <div id="import-status" style="font-size:13px; margin-top:6px; min-height:18px; color:var(--green);"></div>
       </div>
-
-      <!-- MANUAL ADD -->
       <div class="card">
         <div class="card-title">Add Item Manually</div>
         <div class="row">
-          <input type="text" id="manual-item-name" placeholder="Item name" style="flex:1;"
-            onkeydown="if(event.key==='Enter') addItemManual()" />
+          <input type="text" id="manual-item-name" placeholder="Item name" style="flex:1;" onkeydown="if(event.key==='Enter') addItemManual()" />
           <input type="text" id="manual-item-id" placeholder="Item ID (optional)" style="width:120px;" />
           <button class="btn btn-gold" onclick="addItemManual()">Add</button>
         </div>
       </div>
-
       <div style="margin-top:1rem;">
         <button class="btn btn-gold" onclick="startRaid()" style="width:100%;">
           ⚔ Open Auction House
@@ -869,11 +427,9 @@
     <div class="metric"><div class="metric-label">Items</div><div class="metric-value" id="m-items">0</div></div>
     <div class="metric"><div class="metric-label">Closed</div><div class="metric-value" id="m-closed">0</div></div>
   </div>
-
   <div class="notice info" id="raider-notice" style="display:none;">
     You are viewing as a raider. Enter your name and gold amount on any item to place a bid.
   </div>
-
   <div class="filter-row">
     <button class="filter-btn active" onclick="setFilter('all', this)">All</button>
     <button class="filter-btn" onclick="setFilter('open', this)">Open</button>
@@ -886,7 +442,6 @@
       <button class="btn btn-outline btn-sm" onclick="closeAll()">Close All</button>
     </div>
   </div>
-
   <div class="items-grid" id="items-grid">
     <div class="empty-state">No items yet. Go to Setup to import your loot list.</div>
   </div>
@@ -895,16 +450,13 @@
 <!-- PAYOUT VIEW -->
 <div id="view-payout" class="view">
   <h2>Payout Breakdown</h2>
-
   <div class="metrics-row">
     <div class="metric"><div class="metric-label">Total Pot</div><div class="metric-value" id="p-pot">0g</div></div>
     <div class="metric"><div class="metric-label">Host Cut</div><div class="metric-value" id="p-host">0g</div></div>
     <div class="metric"><div class="metric-label">Raider Pool</div><div class="metric-value" id="p-pool">0g</div></div>
     <div class="metric"><div class="metric-label">Per Raider</div><div class="metric-value" id="p-each">0g</div></div>
   </div>
-
   <div class="notice" id="payout-notice" style="display:none;"></div>
-
   <div class="card">
     <div class="card-title">Raider Payouts <span id="paid-count" style="color:var(--text-dim); font-weight:400; font-size:10px;"></span></div>
     <table class="payout-table" id="payout-table">
@@ -922,7 +474,6 @@
       </tbody>
     </table>
   </div>
-
   <div class="card host-only-block" id="payout-host-card">
     <div class="card-title">Host</div>
     <div style="display:flex; align-items:center; justify-content:space-between;">
@@ -939,9 +490,6 @@
 <div id="toast"></div>
 
 <script>
-// ═══════════════════════════════════════════════════════
-//  STATE
-// ═══════════════════════════════════════════════════════
 let state = {
   hostPin: localStorage.getItem('gdkp_pin') || '',
   isHost: false,
@@ -954,12 +502,6 @@ let state = {
   currentFilter: 'all',
 };
 
-let pollInterval = null;
-let timerInterval = null;
-
-// ═══════════════════════════════════════════════════════
-//  AUTH
-// ═══════════════════════════════════════════════════════
 function tryPin() {
   const entered = document.getElementById('pin-input').value;
   if (!state.hostPin) {
@@ -1000,14 +542,10 @@ function enterAsRaider() {
   switchView('auction');
 }
 
-// ═══════════════════════════════════════════════════════
-//  UI / VIEWS
-// ═══════════════════════════════════════════════════════
 function switchView(name) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   const view = document.getElementById('view-' + name);
   if (view) view.classList.add('active');
-  
   if (name === 'auction') renderAuction();
   else if (name === 'payout') renderPayout();
   else if (name === 'setup') renderSetup();
@@ -1039,9 +577,6 @@ function renderRaiderTags() {
   ).join('');
 }
 
-// ═══════════════════════════════════════════════════════
-//  SETUP FUNCTIONS
-// ═══════════════════════════════════════════════════════
 function savePin() {
   const newPin = document.getElementById('new-pin').value;
   if (!newPin) return toast('Enter a PIN');
@@ -1069,7 +604,6 @@ function testBackend() {
   const status = document.getElementById('backend-status');
   status.textContent = 'Testing...';
   status.style.color = 'var(--text-muted)';
-  
   fetch(url, { method: 'POST', body: JSON.stringify({ action: 'ping' }) })
     .then(r => { status.textContent = '✓ Connection OK'; status.style.color = 'var(--green)'; })
     .catch(e => { status.textContent = '✗ Connection failed'; status.style.color = 'var(--red)'; });
@@ -1094,11 +628,8 @@ function removeRaider(idx) {
 function importItems() {
   const text = document.getElementById('import-text').value;
   if (!text.trim()) return toast('Paste item data');
-  
   try {
     let items = [];
-    
-    // Try JSON
     try {
       const data = JSON.parse(text);
       if (Array.isArray(data)) {
@@ -1107,14 +638,12 @@ function importItems() {
         items = data.items.map(i => ({ name: i.name || i, id: i.id || '' }));
       }
     } catch {
-      // Try CSV or plain
       const lines = text.split('\n').filter(l => l.trim());
       items = lines.map(line => {
         const [id, name] = line.split(',');
         return { name: name ? name.trim() : id.trim(), id: id ? id.trim() : '' };
       });
     }
-    
     state.items = items.map(i => ({
       id: i.id || '',
       name: i.name,
@@ -1123,7 +652,6 @@ function importItems() {
       createdAt: Date.now()
     }));
     saveState();
-    
     const status = document.getElementById('import-status');
     status.textContent = '✓ Imported ' + state.items.length + ' items';
     document.getElementById('import-text').value = '';
@@ -1141,7 +669,6 @@ function addItemManual() {
   const name = document.getElementById('manual-item-name').value.trim();
   const id = document.getElementById('manual-item-id').value.trim();
   if (!name) return toast('Enter item name');
-  
   state.items.push({
     id: id,
     name: name,
@@ -1149,7 +676,6 @@ function addItemManual() {
     bids: [],
     createdAt: Date.now()
   });
-  
   saveState();
   document.getElementById('manual-item-name').value = '';
   document.getElementById('manual-item-id').value = '';
@@ -1162,21 +688,16 @@ function startRaid() {
   switchView('auction');
 }
 
-// ═══════════════════════════════════════════════════════
-//  AUCTION FUNCTIONS
-// ═══════════════════════════════════════════════════════
 function renderAuction() {
   const grid = document.getElementById('items-grid');
   if (state.items.length === 0) {
     grid.innerHTML = '<div class="empty-state">No items yet. Go to Setup to import your loot list.</div>';
     return;
   }
-  
   const filtered = state.items.filter(item => {
     if (state.currentFilter === 'all') return true;
     return item.status === state.currentFilter;
   });
-  
   grid.innerHTML = filtered.map((item, idx) => `
     <div class="item-card ${item.status}">
       <div class="item-card-header">
@@ -1189,7 +710,6 @@ function renderAuction() {
       </div>
     </div>
   `).join('');
-  
   recalc();
 }
 
@@ -1228,19 +748,15 @@ function placeBid(idx) {
   const nameEl = document.getElementById('bid-name-' + idx);
   const amtEl = document.getElementById('bid-amt-' + idx);
   if (!nameEl || !amtEl) return;
-  
   const name = nameEl.value.trim();
   const amt = parseInt(amtEl.value);
-  
   if (!name) return toast('Enter your name');
   if (!amt || amt <= 0) return toast('Enter a valid bid amount');
-  
   const item = state.items[idx];
   if (item.bids.length > 0) {
     const lastBid = item.bids[0].amount;
     if (amt <= lastBid) return toast('Bid must be higher than ' + lastBid + 'g');
   }
-  
   item.bids.unshift({ raider: name, amount: amt });
   item.status = 'open';
   saveState();
@@ -1286,12 +802,8 @@ function setFilter(filter, btn) {
   renderAuction();
 }
 
-// ═══════════════════════════════════════════════════════
-//  PAYOUT FUNCTIONS
-// ═══════════════════════════════════════════════════════
 function renderPayout() {
   const body = document.getElementById('payout-body');
-  
   const payouts = {};
   state.items.forEach(item => {
     item.bids.forEach((bid, idx) => {
@@ -1303,17 +815,14 @@ function renderPayout() {
       }
     });
   });
-  
   const totalSpent = Object.values(payouts).reduce((s, p) => s + p.spent, 0);
   const hostCut = Math.floor(totalSpent * state.hostCutPct / 100);
   const raiderPool = totalSpent - hostCut;
   const raiderCount = Object.keys(payouts).length;
   const perRaider = raiderCount > 0 ? Math.floor(raiderPool / raiderCount) : 0;
-  
   Object.keys(payouts).forEach(raider => {
     payouts[raider].earned = perRaider;
   });
-  
   const rows = Object.entries(payouts).map(([raider, p]) => {
     const net = p.earned - p.spent;
     const isPaid = state.paidOut[raider];
@@ -1327,13 +836,11 @@ function renderPayout() {
       </tr>
     `;
   });
-  
   if (rows.length === 0) {
     body.innerHTML = '<tr><td colspan="5" class="empty-state">No raiders or bids yet.</td></tr>';
   } else {
     body.innerHTML = rows.join('');
   }
-  
   document.getElementById('p-pot').textContent = totalSpent + 'g';
   document.getElementById('p-host').textContent = hostCut + 'g';
   document.getElementById('p-pool').textContent = raiderPool + 'g';
@@ -1360,13 +867,11 @@ function exportCSV() {
       }
     });
   });
-  
   const totalSpent = Object.values(payouts).reduce((s, p) => s + p.spent, 0);
   const hostCut = Math.floor(totalSpent * state.hostCutPct / 100);
   const raiderPool = totalSpent - hostCut;
   const raiderCount = Object.keys(payouts).length;
   const perRaider = raiderCount > 0 ? Math.floor(raiderPool / raiderCount) : 0;
-  
   let csv = 'Raider,Earned,Spent,Net\n';
   Object.entries(payouts).forEach(([raider, p]) => {
     const earned = perRaider;
@@ -1374,7 +879,6 @@ function exportCSV() {
     csv += `${raider},${earned},${p.spent},${net}\n`;
   });
   csv += `\nHost Cut,${hostCut},${hostCut},${hostCut}\n`;
-  
   const blob = new Blob([csv], { type: 'text/csv' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -1384,18 +888,13 @@ function exportCSV() {
   URL.revokeObjectURL(url);
 }
 
-// ═══════════════════════════════════════════════════════
-//  UTILS
-// ═══════════════════════════════════════════════════════
 function recalc() {
   const totalBids = state.items.reduce((sum, item) => {
     return sum + (item.bids.length > 0 ? item.bids[0].amount : 0);
   }, 0);
-  
   const hostCut = Math.floor(totalBids * state.hostCutPct / 100);
   const perRaider = state.raiders.length > 0 ? Math.floor((totalBids - hostCut) / state.raiders.length) : 0;
   const closed = state.items.filter(i => i.status === 'closed').length;
-  
   document.getElementById('m-pot').textContent = totalBids + 'g';
   document.getElementById('m-host-cut').textContent = hostCut + 'g';
   document.getElementById('m-per-raider').textContent = perRaider + 'g';
@@ -1418,7 +917,6 @@ function toast(msg) {
   setTimeout(() => el.classList.remove('show'), 3000);
 }
 
-// Init on load
 initUI();
 </script>
 </body>
